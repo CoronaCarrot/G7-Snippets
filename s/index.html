@@ -32,13 +32,14 @@
 </head>
 <body style="height: 100%; width: 100%; margin: 0;">
     <div class="codeblock" style="height: 100%; width: 100%;">
-        <pre style="margin: 0; height: 100%; width: 100%;"><code class="" id="scontain" style="height: calc(100% - 40px); margin: 0; padding: 20px;"></code></pre>
+        <div class="code-header" style="width: 100%; height: 20px;"> </div>
+        <pre style="margin: 0; height: 100%; width: 100%;"><code class="" id="scontain" style="height: calc(100% - 60px); margin: 0; padding: 20px; padding-top: 40px;"></code></pre>
     </div>
 </body>
 <footer>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const src = urlParams.get('s');
+        const src = urlParams.get('s') ?? "const no = `the url params are missing the ${s} of url encoded code`";
         const lang = urlParams.get('lang');
         const highlight = ["1", "true"].includes(urlParams.get('hl'))
         console.log(src);
