@@ -8,6 +8,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <link rel="stylesheet" href="https://cdn.statically.io/gh/dracula/highlightjs/7e046d97/dracula.css">
 
+    <style>
+        code {
+            counter-reset: step;
+            counter-increment: step 0;
+        }
+
+        code .line::before {
+            content: counter(step);
+            counter-increment: step;
+            width: 1rem;
+            margin-right: 1.5rem;
+            display: inline-block;
+            text-align: right;
+            color: rgba(115,138,148,.4)
+        }
+    </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
@@ -23,10 +39,10 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const src = urlParams.get('s');
-        console.log(atob(src));
+        console.log(src);
 
         const codeblock = document.getElementById("scontain");
-        codeblock.innerText = `${atob(src)}`
+        codeblock.innerText = `${src}`
         hljs.highlightAll();
     </script>
 </footer>
