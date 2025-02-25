@@ -38,6 +38,10 @@
             background-color: #68c068;
             cursor: pointer;
         }
+
+        #consoleOutput.show {
+            display: flex;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
@@ -47,24 +51,30 @@
     <div class="codeblock" style="height: 100%; width: 100%; background: #282a36;">
         <div class="code-header" style="width: calc(100% - 5px); height: 30px; display: flex; position: absolute; top: 0; left: 0; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">CODE SNIPPET</div>
         <pre style="margin: 0; width: 100%;"><code class="" id="scontain" style="height: calc(100% - 70px); margin: 0; padding: 20px; padding-top: 50px;"></code></pre>
-        <div class="code-header" style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
-            <p>CONSOLE</p>
-            <button class="run-btn">RUN</button>
+        <div id="consoleOutput" style="display: none;">
+            <div class="code-header" style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
+                <p>CONSOLE</p>
+                <button class="run-btn">RUN</button>
+            </div>
+            <pre style="margin: 0; width: 100%;"><code id="cout" style="height: calc(100% - 40px); margin: 0; padding: 20px;">
+                
+            </code></pre>
         </div>
-        <pre style="margin: 0; width: 100%;"><code id="cout" style="height: calc(100% - 40px); margin: 0; padding: 20px;">
-        
-        </code></pre>
     </div>
 </body>
 <footer>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const src = urlParams.get('s') ?? "const no = `the url params are missing the ${s} of url encoded code`";
+        const showConsole = ["1", "true"].includes(urlParams.get('showConsole') ?? "true")
         const lang = urlParams.get('lang');
-        const highlight = ["1", "true"].includes(urlParams.get('hl') ?? "true");
+        const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
         console.log(src);
 
         const codeblock = document.getElementById("scontain");
+        const consoleOutput = document.getElementById("consoleOutput");
+
+        if (showConsole) consoleOutput.classList.add("show")
         if (lang) codeblock.classList.add(`language-${lang}`)
         codeblock.textContent = `${src}`
         if (highlight) hljs.highlightAll();
