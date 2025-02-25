@@ -39,11 +39,12 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const src = urlParams.get('s');
+        const highlight = urlParams.get('hl');
         console.log(src);
 
         const codeblock = document.getElementById("scontain");
         codeblock.innerText = `${src}`
-        // hljs.highlightAll();
+        if (highlight) hljs.highlightAll();
     </script>
 </footer>
 </html>
