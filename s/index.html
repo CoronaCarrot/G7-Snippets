@@ -13,7 +13,7 @@
 </head>
 <body style="height: 100%; width: 100%; margin: 0;">
     <div class="codeblock" style="height: 100%; width: 100%;">
-        <pre><code class="language-js" id="scontain"></code></pre>
+        <pre style="margin: 0; height: 100%; width: 100%;"><code class="language-js" id="scontain" style="height: calc(100% - 40px); margin: 0; padding: 20px;"></code></pre>
     </div>
 </body>
 <footer>
@@ -23,7 +23,8 @@
         console.log(atob(src));
 
         const codeblock = document.getElementById("scontain");
-        codeblock.innerText = `${src}`
+        codeblock.innerText = `${atob(src)}`
+        hljs.highlightAll();
     </script>
 </footer>
 </html>
