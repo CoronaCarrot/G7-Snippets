@@ -32,17 +32,19 @@
 </head>
 <body style="height: 100%; width: 100%; margin: 0;">
     <div class="codeblock" style="height: 100%; width: 100%;">
-        <pre style="margin: 0; height: 100%; width: 100%;"><code class="language-js" id="scontain" style="height: calc(100% - 40px); margin: 0; padding: 20px;"></code></pre>
+        <pre style="margin: 0; height: 100%; width: 100%;"><code class="" id="scontain" style="height: calc(100% - 40px); margin: 0; padding: 20px;"></code></pre>
     </div>
 </body>
 <footer>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const src = urlParams.get('s');
-        const highlight = urlParams.get('hl');
+        const lang = urlParams.get('lang');
+        const highlight = ["1", "true"].includes(urlParams.get('hl'))
         console.log(src);
 
         const codeblock = document.getElementById("scontain");
+        codeblock.classList.add(`language-${lang}`)
         codeblock.textContent = `${src}`
         if (highlight) hljs.highlightAll();
     </script>
