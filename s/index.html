@@ -1,18 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100%; width: 100%;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snippet</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/html.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
 </head>
-<body>
-    <h1>AHHHHHHHHHHHHHHHHHHHHHHHHHH</h1>
+<body style="height: 100%; width: 100%; margin: 0;">
+    <div class="codeblock" style="height: 100%; width: 100%;">
+        <pre><code class="language-js" id="scontain"></code></pre>
+    </div>
 </body>
 <footer>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const src = urlParams.get('s');
         console.log(atob(src));
+
+        const codeblock = document.getElementById("scontain");
+        codeblock.innerText = `${src}`
     </script>
 </footer>
 </html>
