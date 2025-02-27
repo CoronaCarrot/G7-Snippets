@@ -4,53 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snippet</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
-    <link rel="stylesheet" href="https://cdn.statically.io/gh/dracula/highlightjs/7e046d97/dracula.css">
-
-    <style>
-        code {
-            counter-reset: step;
-            counter-increment: step 0;
-        }
-
-        code .line::before {
-            content: counter(step);
-            counter-increment: step;
-            width: 1rem;
-            margin-right: 1.5rem;
-            display: inline-block;
-            text-align: right;
-            color: rgba(115,138,148,.4)
-        }
-
-        .run-btn {
-            display: flex;
-            position: absolute;
-            right: 5px;
-            padding: 2px 10px;
-            background-color: #569956;
-            border: none;
-            border-radius: 2px;
-        }
-
-        .run-btn:hover {
-            background-color: #68c068;
-            cursor: pointer;
-        }
-
-        #consoleOutput.show {
-            display: block !important;
-        }
-    </style>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css" />
+    <link rel="stylesheet" href="../assets/css/app.css">
 </head>
-<body style="height: auto; width: 100%; margin: 0;">
+<body style="height: auto; width: 100%; margin: 0; background: #282a36;">
+    <div class="code-header" style="width: calc(100% - 5px); height: 30px; display: flex; position: relative; top: 0; left: 0; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">CODE SNIPPET</div>
     <div class="codeblock" style="height: 100%; width: 100%; background: #282a36;">
-        <div class="code-header" style="width: calc(100% - 5px); height: 30px; display: flex; position: absolute; top: 0; left: 0; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">CODE SNIPPET</div>
-        <pre style="margin: 0; width: 100%;"><code class="" id="scontain" style="height: calc(100% - 70px); margin: 0; padding: 20px; padding-top: 50px;"></code></pre>
+        <div style="margin: 0; width: 100%;"><textarea class="code-editor" placeholder="javascript" id="scontain"></textarea></div>
         <div id="consoleOutput" style="display: none;">
             <div class="code-header" style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
                 <p>CONSOLE</p>
@@ -63,9 +25,15 @@
     </div>
 </body>
 <footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const src = urlParams.get('s') ?? "const no = `the url params are missing the ${s} of url encoded code`";
+        const src = urlParams.get('s') ?? "";
         const showConsole = ["1", "true"].includes(urlParams.get('showConsole') ?? "true")
         const lang = urlParams.get('lang');
         const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
@@ -75,9 +43,17 @@
         const consoleOutput = document.getElementById("consoleOutput");
 
         if (showConsole) consoleOutput.classList.add("show")
-        if (lang) codeblock.classList.add(`language-${lang}`)
         codeblock.textContent = `${src}`
-        if (highlight) hljs.highlightAll();
+        
+        const jsEditor = CodeMirror.fromTextArea(document.getElementById("scontain"), {
+            mode: "javascript",
+            lineNumbers: true,
+            theme: "dracula",
+            viewportMargin: Infinity,
+            autoCloseBrackets: true,
+            smartIndent: true,
+            indentUnit: 4,
+        });
     </script>
 </footer>
 </html>

@@ -1,0 +1,55 @@
+.run-btn {
+    display: flex;
+    position: absolute;
+    right: 5px;
+    padding: 2px 10px;
+    background-color: #569956;
+    border: none;
+    border-radius: 2px;
+}
+
+.run-btn:hover {
+    background-color: #68c068;
+    cursor: pointer;
+}
+
+#consoleOutput.show {
+    display: block !important;
+}
+
+.code-editor {
+    height: calc(100% - 70px);
+    margin: 0;
+    padding: 20px;
+    padding-top: 50px;
+    resize: none;
+    width: calc(100% - 40px);
+    background: none;
+    color: ghostwhite;
+    border: none;
+}
+
+.code-editor:focus {
+    border: none;
+    outline: none;
+}
+
+/* width */
+.CodeMirror-vscrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.CodeMirror-vscrollbar::-webkit-scrollbar-track {
+  background: #282a36;
+}
+
+/* Handle */
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb {
+  background: #8b8b8b85;
+}
+
+/* Handle on hover */
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover {
+  background: #b8b8b885;
+}
