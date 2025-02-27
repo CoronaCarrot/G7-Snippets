@@ -1,20 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" style="height: 100%; width: 100%;">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snippet</title>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css" />
     <link rel="stylesheet" href="../assets/css/app.css">
 </head>
-<body style="height: auto; width: 100%; margin: 0; background: #282a36;">
-    <div class="code-header" style="width: calc(100% - 5px); height: 30px; display: flex; position: relative; top: 0; left: 0; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">CODE SNIPPET</div>
-    <div class="codeblock" style="height: 100%; width: 100%; background: #282a36;">
-        <div style="margin: 0; width: 100%;"><textarea class="code-editor" placeholder="javascript" id="scontain"></textarea></div>
-        <div id="consoleOutput" style="display: none;">
-            <div class="code-header" style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
+
+<body>
+    <div class="playground-header">CODE PLAYGROUND</div>
+    <div class="playground-container rr">
+        <div class="playground-editor">
+            <div><textarea class="code-editor" placeholder="javascript" id="scontain"></textarea></div>
+        </div>
+        <div id="consoleOutput" style="display: none; width: 100%;">
+            <div class="code-header"
+                style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
                 <p>CONSOLE</p>
                 <button class="run-btn">RUN</button>
             </div>
@@ -44,7 +49,7 @@
 
         if (showConsole) consoleOutput.classList.add("show")
         codeblock.textContent = `${src}`
-        
+
         const jsEditor = CodeMirror.fromTextArea(document.getElementById("scontain"), {
             mode: "javascript",
             lineNumbers: true,
@@ -56,4 +61,5 @@
         });
     </script>
 </footer>
+
 </html>

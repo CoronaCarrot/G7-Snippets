@@ -1,3 +1,10 @@
+body {
+  height: auto;
+  width: 100%;
+  margin: 0;
+  background: #282a36;
+}
+
 .run-btn {
     display: flex;
     position: absolute;
@@ -14,8 +21,42 @@
 }
 
 #consoleOutput.show {
-    display: block !important;
+  display: block !important;
 }
+
+.playground-header {
+  width: calc(100% - 5px);
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.2);
+  color: white;
+  align-items: center;
+  padding-left: 5px;
+  font-size: 0.9em;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.playground-container.rr {
+  height: 100%;
+  width: 100%;
+  background: #282a36;
+  display: flex;
+  flex-direction: row;
+}
+
+.playground-editor {
+  margin: 0;
+  width: 100%;
+}
+
+
+
+
 
 .code-editor {
     height: calc(100% - 70px);
