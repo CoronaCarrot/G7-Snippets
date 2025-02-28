@@ -1,5 +1,5 @@
 body {
-  height: auto;
+  height: 100vh;
   width: 100%;
   margin: 0;
   background: #282a36;
@@ -25,24 +25,22 @@ body {
 }
 
 .playground-header {
-  width: calc(100% - 5px);
+  width: calc(100% - 20px);
   height: 30px;
+  padding: 10px;
   display: flex;
   flex-direction: row;
   position: relative;
-  top: 0;
-  left: 0;
   background-color: rgba(0,0,0,0.2);
   color: white;
   align-items: center;
-  padding-left: 5px;
   font-size: 0.9em;
   font-family: monospace;
   font-weight: 600;
 }
 
 .playground-container.rr {
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100%;
   background: #282a36;
   display: flex;
@@ -51,46 +49,115 @@ body {
 
 .playground-editor {
   margin: 0;
+  position: relative;
   width: 100%;
+}
+
+.playground-code {
+  height: 100%;
 }
 
 
 
 
 
-.code-editor {
-    height: calc(100% - 70px);
+.panel {
     margin: 0;
-    padding: 20px;
-    padding-top: 50px;
     resize: none;
-    width: calc(100% - 40px);
+    width: 100%;
     background: none;
     color: ghostwhite;
     border: none;
 }
 
-.code-editor:focus {
+.panel:focus {
     border: none;
     outline: none;
 }
 
+.gutter {
+  height: 1px;
+  max-height: 1px;
+  position: relative;
+  background: #4e5058;
+}
+
+.gutter:after {
+  content: "";
+  display: block;
+  height: 8px;
+  width: 100%;
+  position: absolute;
+  top: -3px;
+  z-index: 10;
+}
+
+.CodeMirror-scrollbar-filler {
+  background: #282a36;
+}
 /* width */
-.CodeMirror-vscrollbar::-webkit-scrollbar {
+.CodeMirror-vscrollbar::-webkit-scrollbar, .CodeMirror-hscrollbar::-webkit-scrollbar {
   width: 10px;
 }
 
 /* Track */
-.CodeMirror-vscrollbar::-webkit-scrollbar-track {
+.CodeMirror-vscrollbar::-webkit-scrollbar-track, CodeMirror-hscrollbar::-webkit-scrollbar-track {
   background: #282a36;
 }
 
 /* Handle */
-.CodeMirror-vscrollbar::-webkit-scrollbar-thumb {
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb, CodeMirror-hscrollbar::-webkit-scrollbar-thumb {
   background: #8b8b8b85;
 }
 
 /* Handle on hover */
-.CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover {
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb:hover, CodeMirror-hscrollbar::-webkit-scrollbar-thumb:hover {
   background: #b8b8b885;
+}
+
+.CodeMirror-hints::-webkit-scrollbar {
+  width: 5px;
+}
+
+.CodeMirror-hints::-webkit-scrollbar-track {
+  background: rgba(115, 116, 125, 0.5);
+}
+
+.CodeMirror-hints::-webkit-scrollbar-thumb {
+  background: #8b8b8b85;
+  border-radius: 4px;
+}
+
+.CodeMirror-hints::-webkit-scrollbar-thumb:hover {
+  background: #b8b8b885;
+  border-radius: 4px;
+}
+
+.CodeMirror-hints {
+  /* From https://css.glass */
+  background: rgba(115, 116, 125, 0.34);
+  border-radius: 4px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(115, 116, 125, 0.3);
+
+  font-size: 90%;
+  z-index: 10;
+  max-height: 20em;
+  overflow-y: auto;
+}
+
+.CodeMirror-hint {
+  margin: 0;
+  padding: 2px 6px;
+  white-space: pre;
+  cursor: pointer;
+  font-family: monospace;
+  color: white;
+}
+
+li.CodeMirror-hint-active, .CodeMirror-hint:hover {
+  background: #b7ebf859;
+  color: white;
 }
