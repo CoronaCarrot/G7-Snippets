@@ -120,9 +120,11 @@ body {
   z-index: 10;
 }
 
+
 .panel .CodeMirror {
   height: 100%;
 }
+
 .CodeMirror-scrollbar-filler {
   background: #282a36;
 }

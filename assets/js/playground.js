@@ -12,6 +12,11 @@ const consoleGutter = document.getElementById("consoleGutter");
 if (showConsole) consoleOutput.style.display = "block"; consoleGutter.style.display = "block"
 codeblock.textContent = `${src}`
 
+
+
+/// EDITOR SETUP ///
+window.HTMLHint = window.HTMLHint.HTMLHint;
+
 function autoComplete(editor) {
     editor.showHint({
         completeSingle: false
@@ -24,10 +29,9 @@ function shouldShowHint(cm, change) {
     return !line.trim().endsWith(';');
 }
 
-
 const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), {
     mode: "javascript",
-    
+    lineWrapping: true,
     lineNumbers: true,
     theme: "dracula",
     viewportMargin: Infinity,
@@ -35,7 +39,12 @@ const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), 
     smartIndent: true,
     indentUnit: 4,
     tabSize: 4,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+    extraKeys: { 
+        "Ctrl-Space": "autocomplete"
+    },
+    gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    lint: true,
+    foldGutter: true
 });
 
 jsEditor.on("inputRead", function(cm, change) {
@@ -46,6 +55,7 @@ jsEditor.on("inputRead", function(cm, change) {
 
 const cssEditor = CodeMirror.fromTextArea(document.getElementById("css-contain"), {
     mode: "css",
+    lineWrapping: true,
     lineNumbers: true,
     theme: "dracula",
     viewportMargin: Infinity,
@@ -53,7 +63,10 @@ const cssEditor = CodeMirror.fromTextArea(document.getElementById("css-contain")
     smartIndent: true,
     indentUnit: 4,
     tabSize: 4,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+    extraKeys: { "Ctrl-Space": "autocomplete" },
+    gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    lint: true,
+    foldGutter: true
 });
 
 cssEditor.on("inputRead", function(cm, change) {
@@ -65,6 +78,7 @@ cssEditor.on("inputRead", function(cm, change) {
 
 const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-contain"), {
     mode: "htmlmixed",
+    lineWrapping: true,
     lineNumbers: true,
     theme: "dracula",
     viewportMargin: Infinity,
@@ -73,7 +87,10 @@ const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-contain
     smartIndent: true,
     indentUnit: 4,
     tabSize: 4,
-    extraKeys: { "Ctrl-Space": "autocomplete" }
+    extraKeys: { "Ctrl-Space": "autocomplete" },
+    gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    lint: true,
+    foldGutter: true
 });
 
 htmlEditor.on("inputRead", function(cm, change) {
@@ -157,8 +174,8 @@ for (let i = 0; i < preview.children.length; i++) {
                     newPrevWidth = ((startPrevWidth + startNextWidth) / preview.offsetWidth) * 100 - newNextWidth;
                 }
 
-                prevElement.style.width = `${newPrevWidth}%`;  // Adjusting width
-                nextElement.style.width = `${newNextWidth}%`;  // Adjusting width
+                prevElement.style.width = `calc(${newPrevWidth}% - 0.5px)`;  // Adjusting width
+                nextElement.style.width = `calc(${newNextWidth}% - 0.5px)`;  // Adjusting width
             }
 
             document.addEventListener("mousemove", mouseMove);
