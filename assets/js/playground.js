@@ -119,7 +119,7 @@ for (let i = 0; i < editor.children.length; i++) {
             document.addEventListener("mousemove", mouseMove);
 
             document.addEventListener("mouseup", () => {
-                element.style.cursor = "default";
+                element.style.cursor = "n-resize";
                 document.removeEventListener("mousemove", mouseMove);
             }, { once: true });
         });
