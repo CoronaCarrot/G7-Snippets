@@ -6,9 +6,10 @@ const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
 console.log(src);
 
 const codeblock = document.getElementById("js-contain");
-//const consoleOutput = document.getElementById("consoleOutput");
+const consoleOutput = document.getElementById("consoleOutput");
+const consoleGutter = document.getElementById("consoleGutter");
 
-//if (showConsole) consoleOutput.classList.add("show")
+if (showConsole) consoleOutput.style.display = "block"; consoleGutter.style.display = "block"
 codeblock.textContent = `${src}`
 
 function autoComplete(editor) {
@@ -120,6 +121,50 @@ for (let i = 0; i < editor.children.length; i++) {
 
             document.addEventListener("mouseup", () => {
                 element.style.cursor = "n-resize";
+                document.removeEventListener("mousemove", mouseMove);
+            }, { once: true });
+        });
+    }
+}
+
+const preview = document.getElementById("playground-container");
+for (let i = 0; i < preview.children.length; i++) {
+    const element = preview.children[i];
+    // if has class gutter-h 
+    console.log(element)
+    if (element.classList.contains("gutter-h")) {
+        console.log("yay")
+        element.addEventListener("mousedown", function(event) {
+            element.style.cursor = "col-resize";
+            const prevElement = preview.children[i - 1];
+            const nextElement = preview.children[i + 1];
+            const startX = event.clientX;  // Changed from clientY to clientX
+            const startPrevWidth = prevElement.offsetWidth;  // Using width for horizontal resizing
+            const startNextWidth = nextElement.offsetWidth;  // Using width for horizontal resizing
+
+            const mouseMove = (e) => {
+                const deltaX = e.clientX - startX;  // Changed from deltaY to deltaX
+                let newPrevWidth = ((startPrevWidth + deltaX) / preview.offsetWidth) * 100;  // Changed to width calculation
+                let newNextWidth = ((startNextWidth - deltaX) / preview.offsetWidth) * 100;  // Changed to width calculation
+
+                // Ensure minimum size of 25%
+                if (newPrevWidth < 25) {
+                    newPrevWidth = 25;
+                    newNextWidth = ((startPrevWidth + startNextWidth) / preview.offsetWidth) * 100 - newPrevWidth;
+                }
+                if (newNextWidth < 25) {
+                    newNextWidth = 25;
+                    newPrevWidth = ((startPrevWidth + startNextWidth) / preview.offsetWidth) * 100 - newNextWidth;
+                }
+
+                prevElement.style.width = `${newPrevWidth}%`;  // Adjusting width
+                nextElement.style.width = `${newNextWidth}%`;  // Adjusting width
+            }
+
+            document.addEventListener("mousemove", mouseMove);
+
+            document.addEventListener("mouseup", () => {
+                element.style.cursor = "e-resize";  // Cursor change for horizontal resize
                 document.removeEventListener("mousemove", mouseMove);
             }, { once: true });
         });
