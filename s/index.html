@@ -18,18 +18,19 @@
         <div class="playground-container rr">
             <div id="editor" class="playground-editor">
                 <div class="panel" style="height: calc(33.3333% - 0.5px);">
-                    <textarea class="code-editor" placeholder="javascript" id="js-contain"></textarea>
+                    <textarea class="code-editor" placeholder="javascript" id="js-contain" style="display: none;"></textarea>
                 </div>
                 <div class="gutter gutter-v"></div>
                 <div class="panel" style="height: calc(33.3333% - 1px);">
-                    <textarea class="code-editor" placeholder="html" id="html-contain"></textarea>
+                    <textarea class="code-editor" placeholder="html" id="html-contain" style="display: none;"></textarea>
                 </div>
                 <div class="gutter gutter-v"></div>
                 <div class="panel" style="height: calc(33.3333% - 0.5px);">
-                    <textarea class="code-editor" placeholder="css" id="css-contain"></textarea>
+                    <textarea class="code-editor" placeholder="css" id="css-contain" style="display: none;"></textarea>
                 </div>
             </div>
-            <!--<div id="consoleOutput" style="display: none; width: 100%;">
+            <div class="gutter gutter-h"></div>
+            <div id="consoleOutput" style="display: none; width: 100%;">
                 <div class="code-header"
                     style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
                     <p>CONSOLE</p>
@@ -37,7 +38,7 @@
                 <pre style="margin: 0; width: 100%;"><code id="cout" style="height: calc(100% - 40px); margin: 0; padding: 20px;">
                     
                 </code></pre>
-            </div>-->
+            </div>
         </div>
     </div>
 </body>

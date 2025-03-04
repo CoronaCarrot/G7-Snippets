@@ -84,14 +84,17 @@ body {
 }
 
 .gutter {
-  height: 1px;
-  max-height: 1px;
   position: relative;
   background: #4e5058;
+}
+
+.gutter.gutter-v {
+  height: 1px;
+  max-height: 1px;
   cursor: n-resize;
 }
 
-.gutter:after {
+.gutter.gutter-v:after {
   content: "";
   display: block;
   height: 8px;
@@ -101,6 +104,21 @@ body {
   z-index: 10;
 }
 
+.gutter.gutter-h {
+  width: 1px;
+  max-width: 1px;
+  cursor: e-resize;
+}
+
+.gutter.gutter-h:after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 100%;
+  position: absolute;
+  left: -3px;
+  z-index: 10;
+}
 
 .panel .CodeMirror {
   height: 100%;
