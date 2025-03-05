@@ -42,12 +42,25 @@
                         sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation allow-downloads"></iframe>
                 </div>
                 <div class="gutter gutter-v"></div>
-                <div id="consoleOutput" style="display: none; height: calc(50% - 2px);">
-                    <div class="code-header"
-                        style="width: calc(100% - 5px); height: 40px; display: flex; background-color: rgba(0,0,0,0.2); color: white; align-items: center; padding-left: 5px; font-size: 0.9em; font-family: monospace; font-weight: 600;">
+                <div id="consoleOutput" class="maximised" style="display: none; height: calc(50% - 2px);">
+                    <div class="console-header">
+                        <!-- svg /assets/svg/console.svg -->
+                        <img src="../assets/svg/console.svg" alt="console"
+                            style="width: 18px; height: 18px; padding-right: 5px;">
                         <p>CONSOLE</p>
+                        <div class="right-actions">
+                            <!-- SVG buttons -->
+                            <img id="btn-cclear" src="../assets/svg/clear_console.svg" alt="clear"
+                                style="width: 18px; height: 18px; padding-right: 5px;" onclick="iframeConsole.clear();">
+                            <img id="btn-copen" src="../assets/svg/open_console.svg" alt="open"
+                                style="width: 18px; height: 18px; padding-right: 5px;"
+                                onclick="consoleOutput.classList.add('maximised');">
+                            <img id="btn-cmin" src="../assets/svg/minimise_console.svg" alt="minimise"
+                                style="width: 18px; height: 18px;"
+                                onclick="consoleOutput.classList.remove('maximised');">
+                        </div>
                     </div>
-                    <ul id="cout" style="width: calc(100% - 10px); height: calc(100% - 40px - 10px);">
+                    <ul id="cout" style="width: calc(100% - 10px); height: calc(100% - 38px);">
                     </ul>
                 </div>
             </div>

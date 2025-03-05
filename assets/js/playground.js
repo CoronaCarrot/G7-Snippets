@@ -347,6 +347,10 @@ class HTMLConsole {
         this.document.innerHTML += html
     }
 
+    dirxml(payload) {
+        this.system("🔏 Built-In Console Doesn't Support dirxml")
+    };
+
     error(payload) {
         payload = this.peparePayload(payload);
         this.document.innerHTML += `<li class="console-line error group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
