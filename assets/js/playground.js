@@ -288,7 +288,7 @@ document.getElementById("run").addEventListener("click", function() {
 // ctrl+enter // ctrl+s 
 document.addEventListener("keydown", function(event) {
     // if ctrl+s also save the snippet to url params js= css= html=
-    if (event.ctrlKey && event.key === "s") {
+    if (event.ctrlKey && event.key.toLowerCase() === "s") {
         event.preventDefault();
         const jsCode = jsEditor.getValue();
         const cssCode = cssEditor.getValue();
@@ -300,7 +300,7 @@ document.addEventListener("keydown", function(event) {
         history.pushState(null, null, url);
         compileSnippet();
     }
-    if (event.ctrlKey && event.key === "Enter") {
+    if (event.ctrlKey && event.key.toLowerCase() === "enter") {
         event.preventDefault();
         compileSnippet();
     }
