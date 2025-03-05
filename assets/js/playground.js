@@ -1,19 +1,24 @@
 const app = document.getElementById("app");
-
-
 const urlParams = new URLSearchParams(window.location.search);
-const src = urlParams.get('js') ?? "";
+
 const showConsole = ["1", "true"].includes(urlParams.get('showConsole') ?? "true")
 const lang = urlParams.get('lang');
 const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
-console.log(src);
 
-const codeblock = document.getElementById("js-contain");
+const jsSrc = urlParams.get('js') ?? "";
+const cssSrc = urlParams.get('css') ?? "";
+const htmlSrc = urlParams.get('html') ?? "";
+const jsCode = document.getElementById("js-contain");
+const cssCode = document.getElementById("css-contain");
+const htmlCode = document.getElementById("html-contain");
+jsCode.value = jsSrc;
+cssCode.value = cssSrc;
+htmlCode.value = htmlSrc;
+
 const consoleOutput = document.getElementById("consoleOutput");
 const consoleGutter = document.getElementById("consoleGutter");
 
 if (showConsole) consoleOutput.style.display = "block"; consoleGutter.style.display = "block"
-codeblock.textContent = `${src}`
 
 
 
