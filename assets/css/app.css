@@ -1,3 +1,6 @@
+/* import google fonts */
+/* inconsolata */ @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap');
+
 body {
   height: 100vh;
   width: 100%;
@@ -89,8 +92,8 @@ body {
 }
 
 .gutter.gutter-v {
-  height: 1px;
-  max-height: 1px;
+  height: 2px;
+  max-height: 2px;
   cursor: n-resize;
 }
 
@@ -105,8 +108,9 @@ body {
 }
 
 .gutter.gutter-h {
-  width: 1px;
-  max-width: 1px;
+  width: 1.5px;
+  min-width: 1.5px;
+  max-width: 1.5px;
   cursor: e-resize;
 }
 
@@ -193,4 +197,107 @@ body {
 li.CodeMirror-hint-active, .CodeMirror-hint:hover {
   background: #b7ebf859;
   color: white;
+}
+
+
+
+/* OUTPUT */
+.iframe-output {
+  width: 100%;
+  border: none;
+  background: white;
+}
+
+#cout {
+  margin: 0;
+  padding: 5px;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal scrollbar */
+  font-family: 'Inconsolata', consolas, monospace;
+  font-size: 0.8em;
+  color: #f3f3f3af;
+  background: #1d1f27;
+  width: calc(100% - 10px); /* Adjust width to prevent overflow */
+  height: calc(100% - 40px - 10px); /* Adjust height to prevent overflow */
+}
+#cout::-webkit-scrollbar {
+  width: 5px;
+}
+#cout::-webkit-scrollbar-track {
+  background: none;
+}
+#cout::-webkit-scrollbar-thumb {
+  background: #8b8b8b85;
+  border-radius: 4px;
+}
+#cout::-webkit-scrollbar-thumb:hover {
+  background: #b8b8b885;
+  border-radius: 4px;
+}
+
+.console-line {
+  position: relative;
+  align-items: center;
+  display: flex;
+  margin-top: 5px;
+  font-family: 'Inconsolata', consolas, monospace;
+  font-size: 11px;
+  color: #f3f3f3af;
+  white-space: pre-wrap;
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
+  max-width: 100%; 
+  padding: 3px;
+  padding-left: 20px;
+  min-height: 20px;
+  line-height: 1em;
+}
+
+.console-line span {
+  width: 100%;
+  font-size: 12px;
+  line-height: 1.2em;
+  font-weight: 400;
+}
+
+.console-line.system {
+  color: #f3f3f3af;
+  background: rgba(99, 172, 255, 0.2);
+  border-radius: 5px;
+}
+
+.console-line.log:has(+ .console-line.log)::after {
+  /* bottom bar */
+  content: "";
+  display: flex;
+  position: absolute;
+  margin-top: 1px;
+  bottom: -2.1px;
+  width: calc(100% - 20px);
+  height: 1px;
+  max-height: 1px;
+  background: #85858567;
+  margin-top: 5px;
+}
+
+.console-line.error::before {
+  /* x in a red svg */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20px' viewBox='0 -960 960 960' width='20px' fill='%23e3e3e3'%3E%3Cpath d='m339-288 141-141 141 141 51-51-141-141 141-141-51-51-141 141-141-141-51 51 141 141-141 141 51 51ZM480-96q-79 0-149-30t-122.5-82.5Q156-261 126-331T96-480q0-80 30-149.5t82.5-122Q261-804 331-834t149-30q80 0 149.5 30t122 82.5Q804-699 834-629.5T864-480q0 79-30 149t-82.5 122.5Q699-156 629.5-126T480-96Z'/%3E%3C/svg%3E");
+  background-size: 1em;
+  display: flex;
+  position: absolute;
+  left: 2px;
+  top: 0;
+  font-size: 1.2em;
+  color: #eb5a5a;
+  padding-right: 5px;
+  height: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.console-line.error {
+  background: rgba(189, 75, 75, 0.3);
+  border-radius: 5px;
 }

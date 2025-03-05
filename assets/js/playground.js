@@ -1,3 +1,6 @@
+const app = document.getElementById("app");
+
+
 const urlParams = new URLSearchParams(window.location.search);
 const src = urlParams.get('js') ?? "";
 const showConsole = ["1", "true"].includes(urlParams.get('showConsole') ?? "true")
@@ -63,7 +66,9 @@ const cssEditor = CodeMirror.fromTextArea(document.getElementById("css-contain")
     smartIndent: true,
     indentUnit: 4,
     tabSize: 4,
-    extraKeys: { "Ctrl-Space": "autocomplete" },
+    extraKeys: { 
+        "Ctrl-Space": "autocomplete"
+    },
     gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     lint: true,
     foldGutter: true
@@ -87,7 +92,9 @@ const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-contain
     smartIndent: true,
     indentUnit: 4,
     tabSize: 4,
-    extraKeys: { "Ctrl-Space": "autocomplete" },
+    extraKeys: { 
+        "Ctrl-Space": "autocomplete"
+    },
     gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     lint: true,
     foldGutter: true
@@ -99,91 +106,148 @@ htmlEditor.on("inputRead", function(cm, change) {
     }
 });
 
+function setupResizing(container, isVertical = true) {
+    for (let i = 0; i < container.children.length; i++) {
+        const element = container.children[i];
+        const gutterClass = isVertical ? "gutter-v" : "gutter-h";
+        const cursorStyle = isVertical ? "row-resize" : "col-resize";
+        const localCursorResetStyle = element.style.cursor;
+        const sizeProperty = isVertical ? "height" : "width";
+        const offsetProperty = isVertical ? "offsetHeight" : "offsetWidth";
+        const clientProperty = isVertical ? "clientY" : "clientX";
+        const minSize = isVertical ? 8 : 25;
 
+        if (element.classList.contains(gutterClass)) {
+            element.addEventListener("mousedown", function(event) {
+                const cursorResetStyle = app.style.cursor;
+                app.style.cursor = cursorStyle;
+                element.style.cursor = cursorStyle;
+                const prevElement = container.children[i - 1];
+                const nextElement = container.children[i + 1];
+                const startPosition = event[clientProperty];
+                const startPrevSize = prevElement[offsetProperty];
+                const startNextSize = nextElement[offsetProperty];
 
+                prevElement.style.pointerEvents = "none";
+                prevElement.style.userSelect = "none";
+                nextElement.style.pointerEvents = "none";
+                nextElement.style.userSelect = "none";
 
-const editor = document.getElementById("editor");
-for (let i = 0; i < editor.children.length; i++) {
-    const element = editor.children[i];
-    // if has class gutter_v 
-    if (element.classList.contains("gutter-v")) {
-        element.addEventListener("mousedown", function(event) {
-            element.style.cursor = "row-resize";
-            const prevElement = editor.children[i - 1];
-            const nextElement = editor.children[i + 1];
-            const startY = event.clientY;
-            const startPrevHeight = prevElement.offsetHeight;
-            const startNextHeight = nextElement.offsetHeight;
+                const mouseMove = (e) => {
+                    const delta = e[clientProperty] - startPosition;
+                    let newPrevSize = ((startPrevSize + delta) / container[offsetProperty]) * 100;
+                    let newNextSize = ((startNextSize - delta) / container[offsetProperty]) * 100;
 
-            const mouseMove = (e) => {
-                const deltaY = e.clientY - startY;
-                let newPrevHeight = ((startPrevHeight + deltaY) / editor.offsetHeight) * 100;
-                let newNextHeight = ((startNextHeight - deltaY) / editor.offsetHeight) * 100;
+                    // Ensure minimum size
+                    if (newPrevSize < minSize) {
+                        newPrevSize = minSize;
+                        newNextSize = ((startPrevSize + startNextSize) / container[offsetProperty]) * 100 - newPrevSize;
+                    }
+                    if (newNextSize < minSize) {
+                        newNextSize = minSize;
+                        newPrevSize = ((startPrevSize + startNextSize) / container[offsetProperty]) * 100 - newNextSize;
+                    }
 
-                // Ensure minimum size of 8%
-                if (newPrevHeight < 8) {
-                    newPrevHeight = 8;
-                    newNextHeight = ((startPrevHeight + startNextHeight) / editor.offsetHeight) * 100 - newPrevHeight;
+                    prevElement.style[sizeProperty] = prevElement.style[sizeProperty].replace(/(\d+(\.\d+)?)(?=%)/, newPrevSize);
+                    nextElement.style[sizeProperty] = nextElement.style[sizeProperty].replace(/(\d+(\.\d+)?)(?=%)/, newNextSize);
                 }
-                if (newNextHeight < 8) {
-                    newNextHeight = 8;
-                    newPrevHeight = ((startPrevHeight + startNextHeight) / editor.offsetHeight) * 100 - newNextHeight;
-                }
 
-                prevElement.style.height = `${newPrevHeight}%`;
-                nextElement.style.height = `${newNextHeight}%`;
-            }
+                document.addEventListener("mousemove", mouseMove);
 
-            document.addEventListener("mousemove", mouseMove);
+                document.addEventListener("mouseup", () => {
+                    app.style.cursor = cursorResetStyle
+                    element.style.cursor = localCursorResetStyle;
+                    prevElement.style.pointerEvents = "auto";
+                    nextElement.style.pointerEvents = "auto";
+                    prevElement.style.userSelect = "auto";
+                    nextElement.style.userSelect = "auto";
+                    // final resize to fix rounding errors (make sure it adds up to 100%)
+                    const prevSize = prevElement[offsetProperty];
+                    const nextSize = nextElement[offsetProperty];
+                    prevElement.style[sizeProperty] = (prevSize / container[offsetProperty]) * 100 + "%";
+                    nextElement.style[sizeProperty] = (nextSize / container[offsetProperty]) * 100 + "%";
 
-            document.addEventListener("mouseup", () => {
-                element.style.cursor = "n-resize";
-                document.removeEventListener("mousemove", mouseMove);
-            }, { once: true });
-        });
+                    document.removeEventListener("mousemove", mouseMove);
+                }, { once: true });
+            });
+        }
     }
 }
 
-const preview = document.getElementById("playground-container");
-for (let i = 0; i < preview.children.length; i++) {
-    const element = preview.children[i];
-    // if has class gutter-h 
-    console.log(element)
-    if (element.classList.contains("gutter-h")) {
-        console.log("yay")
-        element.addEventListener("mousedown", function(event) {
-            element.style.cursor = "col-resize";
-            const prevElement = preview.children[i - 1];
-            const nextElement = preview.children[i + 1];
-            const startX = event.clientX;  // Changed from clientY to clientX
-            const startPrevWidth = prevElement.offsetWidth;  // Using width for horizontal resizing
-            const startNextWidth = nextElement.offsetWidth;  // Using width for horizontal resizing
+const editorReseize = document.getElementById("editor");
+const outputResize = document.getElementById("output");
+const previewResize = document.getElementById("playground-container");
 
-            const mouseMove = (e) => {
-                const deltaX = e.clientX - startX;  // Changed from deltaY to deltaX
-                let newPrevWidth = ((startPrevWidth + deltaX) / preview.offsetWidth) * 100;  // Changed to width calculation
-                let newNextWidth = ((startNextWidth - deltaX) / preview.offsetWidth) * 100;  // Changed to width calculation
+setupResizing(editorReseize, true); // Vertical resizing for editor
+setupResizing(outputResize, true); // Vertical resizing for output
+setupResizing(previewResize, false); // Horizontal resizing for preview
 
-                // Ensure minimum size of 25%
-                if (newPrevWidth < 25) {
-                    newPrevWidth = 25;
-                    newNextWidth = ((startPrevWidth + startNextWidth) / preview.offsetWidth) * 100 - newPrevWidth;
-                }
-                if (newNextWidth < 25) {
-                    newNextWidth = 25;
-                    newPrevWidth = ((startPrevWidth + startNextWidth) / preview.offsetWidth) * 100 - newNextWidth;
-                }
+/// END OF EDITOR SETUP ///
 
-                prevElement.style.width = `calc(${newPrevWidth}% - 0.5px)`;  // Adjusting width
-                nextElement.style.width = `calc(${newNextWidth}% - 0.5px)`;  // Adjusting width
-            }
 
-            document.addEventListener("mousemove", mouseMove);
+/// OUTPUT IFRAME ///
+const iframe = document.getElementById("output-iframe");
 
-            document.addEventListener("mouseup", () => {
-                element.style.cursor = "e-resize";  // Cursor change for horizontal resize
-                document.removeEventListener("mousemove", mouseMove);
-            }, { once: true });
-        });
+const iframeConsoleOutput = document.getElementById("cout");
+
+class HTMLConsole {
+    constructor(htmlElement) {
+        this.document = htmlElement;
+    }
+
+    system(message) {
+        this.document.innerHTML += `<li class="console-line system"><span>${message}</span></li>`;
+    }
+
+    log(message) {
+        this.document.innerHTML += `<li class="console-line log"><span>${message}</span></li>`;
+    }
+
+    error(message) {
+        this.document.innerHTML += `<li class="console-line error"><span>${message}</span></li>`;
     }
 }
+
+const iframeConsole = new HTMLConsole(iframeConsoleOutput);
+// listen for errors
+window.addEventListener("message", function(event) {
+    if (event.data.console.type == "iframe-error"){
+        iframeConsole.error(event.data.console.payload);
+    } else {
+        // fun HTMLConsole function for console.type
+        try {
+            if (typeof iframeConsole[event.data.console.type] === 'function') {
+                iframeConsole[event.data.console.type](event.data.console.payload);
+            } else {
+                throw new Error(`Unknown console type: ${event.data.console.type}`);
+            }
+        } catch (e) {
+            console.error(e);
+            iframeConsole.error(`🔏 ${e.message}`);
+        }
+    }
+});
+
+document.getElementById("run").addEventListener("click", function() {
+    const jsCode = jsEditor.getValue();
+    const cssCode = cssEditor.getValue();
+    const htmlCode = htmlEditor.getValue();
+    
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(`
+        <html>
+        <head>
+            <script src="../assets/js/injector.js"></script>
+            <style>${cssCode}</style>
+        </head>
+        <body>
+            ${htmlCode}
+            <script>${jsCode}<\/script>
+        </body>
+        </html>
+    `);
+    iframeDoc.close();
+});
+
+/// END OF OUTPUT IFRAME ///
