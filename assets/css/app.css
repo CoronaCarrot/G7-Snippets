@@ -296,7 +296,9 @@ li.CodeMirror-hint-active, .CodeMirror-hint:hover {
   border-radius: 5px;
 }
 
-.console-line.log:has(+ .console-line.log)::after {
+.console-line.log.br::after,
+.console-line.info.br::after,
+.console-line.debug.br::after {
   /* bottom bar */
   content: "";
   display: flex;
@@ -329,5 +331,27 @@ li.CodeMirror-hint-active, .CodeMirror-hint:hover {
 
 .console-line.error {
   background: rgba(189, 75, 75, 0.3);
+  border-radius: 5px;
+}
+
+.console-line.warn::before {
+  /* ! in a yellow svg */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='20px' viewBox='0 -960 960 960' width='20px' fill='%23e3e3e3'%3E%3Cpath d='m480-96q-79 0-149-30t-122.5-82.5Q156-261 126-331T96-480q0-80 30-149.5t82.5-122Q261-804 331-834t149-30q80 0 149.5 30t122 82.5Q804-699 834-629.5T864-480q0 79-30 149t-82.5 122.5Q699-156 629.5-126T480-96Zm0-384q-26 0-45 19t-19 45q0 26 19 45t45 19 45-19 19-45q0-26-19-45t-45-19Zm0 640q-26 0-45 19t-19 45 19 45 45 19 45-19 19-45-19-45-45-19Z'/%3E%3C/svg%3E");
+  background-size: 1em;
+  display: flex;
+  position: absolute;
+  left: 2px;
+  top: 0;
+  font-size: 1.2em;
+  color: #e0e05a;
+  padding-right: 5px;
+  height: 100%;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.console-line.warn {
+  background: rgba(189, 189, 75, 0.3);
   border-radius: 5px;
 }

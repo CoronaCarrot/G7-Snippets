@@ -1,12 +1,47 @@
 injectConsole = (w) => {
+
+    const isClonable = (obj) => {
+        try {
+            structuredClone(obj);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    const convertToPlainObject = (obj) => {
+        if (typeof obj === 'object' && obj !== null) {
+            const plainObject = {};
+            for (const key in obj) {
+                // if function, apply custom serialization
+                if (typeof obj[key] === 'function') {
+                    let fstring = `ƒ ${obj[key].name}()`
+                    plainObject[fstring] = {
+                        length: obj[key].length,
+                        name: obj[key].name,
+                        arguments: (() => {try {return convertToPlainObject(obj[key].arguments)} catch(e) {return e}})(),
+                        caller: (() => {try {return convertToPlainObject(obj[key].caller)} catch(e) {return e}})(),
+                    };
+                } else if (obj.hasOwnProperty(key)) {
+                    plainObject[key] = convertToPlainObject(obj[key]);
+                }
+            }
+            return plainObject;
+        }
+        return obj;
+    };
+
     const pushToConsole = (payload, type) => {
+        if (!isClonable(payload)) {
+            payload = convertToPlainObject(payload);
+        }
         w.parent.postMessage({
             console: {
                 payload: payload,
-                type:    type
+                type: type
             }
-        }, "*")
-    }
+        }, "*");
+    };
     
     w.onerror = (message, url, line, column) => {
         pushToConsole(`${message} at ${line}:${column}`, "iframe-error")
@@ -57,7 +92,7 @@ injectConsole = (w) => {
             },
             assert: function(assertion, label) {
                 if (!assertion) {
-                    pushToConsole(label, "log");
+                    pushToConsole(label, "assert");
                 }
                 let args = Array.from(arguments);
                 systemConsole.assert.apply(this, args);

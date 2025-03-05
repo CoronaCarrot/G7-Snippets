@@ -202,6 +202,18 @@ const iframeConsoleOutput = document.getElementById("cout");
 class HTMLConsole {
     constructor(htmlElement) {
         this.document = htmlElement;
+        this.counts = {};
+    }
+
+    peparePayload(payload) {
+        if (typeof payload === "string") {
+            return [payload];
+        }
+        return payload;
+    }
+
+    assert(payload) {
+        this.error(["Assertion failed:", ...this.peparePayload(payload)]);
     }
 
     clear() {
@@ -209,20 +221,60 @@ class HTMLConsole {
         this.system("🔏 Console was cleared");
     }
 
+    count(label) {
+        const countLabel = label[0] || "default";
+        if (!this.counts[countLabel]) {
+            this.counts[countLabel] = 0;
+        }
+        this.counts[countLabel]++;
+        this.info(`${countLabel}: ${this.counts[countLabel]}`);
+    }
+
+    countReset(label) {
+        const countLabel = label[0] || "default";
+        this.counts[countLabel] = 0;
+    }
+
+    debug(payload) {
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line debug"><span>${payload.join(" ")}</span></li>`;
+    }
+
+    dir(payload) {
+        const obj = payload[0];
+        console.log(obj);
+        this.document.innerHTML += `<li class="console-line dir"><span>${JSON.stringify(obj, null, 2)}</span></li>`;
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line dir"><span>${payload.join(" ")}</span></li>`;
+    }
+
     system(payload) {
-        this.document.innerHTML += `<li class="console-line system"><span>${payload}</span></li>`;
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line system"><span>${payload.join(" ")}</span></li>`;
     }
 
     log(payload) {
-        this.document.innerHTML += `<li class="console-line log"><span>${payload}</span></li>`;
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line log"><span>${payload.join(" ")}</span></li>`;
     }
 
     error(payload) {
-        this.document.innerHTML += `<li class="console-line error"><span>${payload}</span></li>`;
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line error"><span>${payload.join(" ")}</span></li>`;
+    }
+
+    warn(payload) {
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line warn"><span>${payload.join(" ")}</span></li>`;
+    }
+
+    info(payload) {
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line info"><span>${payload.join(" ")}</span></li>`;
     }
 }
 
-const iframeConsole = new HTMLConsole(iframeConsoleOutput);
+var iframeConsole = new HTMLConsole(iframeConsoleOutput);
 // listen for errors
 window.addEventListener("message", function(event) {
     if (event.data.console.type == "iframe-error"){
@@ -242,8 +294,33 @@ window.addEventListener("message", function(event) {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+    function updateHasNextClass() {
+        const consoleLines = iframeConsoleOutput.querySelectorAll('.console-line.log, .console-line.info, .console-line.debug');
+        consoleLines.forEach((line, index) => {
+            const nextLine = consoleLines[index + 1];
+            if (nextLine && (
+                (line.classList.contains('log') && (nextLine.classList.contains('log') || nextLine.classList.contains('info') || nextLine.classList.contains('debug'))) ||
+                (line.classList.contains('info') && (nextLine.classList.contains('info') || nextLine.classList.contains('debug') || nextLine.classList.contains('log'))) ||
+                (line.classList.contains('debug') && (nextLine.classList.contains('debug') || nextLine.classList.contains('info') || nextLine.classList.contains('log')))
+            )) {
+                line.classList.add('br');
+            } else {
+                line.classList.remove('br');
+            }
+        });
+    }
+
+    const observer = new MutationObserver(updateHasNextClass);
+    observer.observe(iframeConsoleOutput, { childList: true, subtree: true });
+
+    // Initial call to set up the classes
+    updateHasNextClass();
+});
+
 
 function compileSnippet() {
+    iframeConsole = new HTMLConsole(iframeConsoleOutput);
     const jsCode = jsEditor.getValue();
     const cssCode = cssEditor.getValue();
     const htmlCode = htmlEditor.getValue();
