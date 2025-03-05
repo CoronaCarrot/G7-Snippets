@@ -46,7 +46,11 @@ const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), 
         "Ctrl-Space": "autocomplete"
     },
     gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-    lint: true,
+    lint: {
+        esversion: 6, // Specify ECMAScript version
+        asi: true, // Allow missing semicolons
+        // Add more linting options as needed
+    },
     foldGutter: true
 });
 
@@ -228,12 +232,29 @@ window.addEventListener("message", function(event) {
     }
 });
 
-document.getElementById("run").addEventListener("click", function() {
+
+function compileSnippet() {
     const jsCode = jsEditor.getValue();
     const cssCode = cssEditor.getValue();
     const htmlCode = htmlEditor.getValue();
     
-    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    // Remove the existing iframe
+    const oldIframe = document.getElementById("output-iframe");
+    if (oldIframe) {
+        oldIframe.remove();
+    }
+
+    // Create a new iframe
+    const newIframe = document.createElement("iframe");
+    newIframe.id = "output-iframe";
+    newIframe.style.width = "100%";
+    newIframe.style.height = "100%";
+    newIframe.classList.add("iframe-output");
+    newIframe.allow = "midi; geolocation; microphone; camera; display-capture; encrypted-media; clipboard-read; clipboard-write; notifications; payment-handler; persistent-storage; background-sync; ambient-light-sensor; accessibility-events; speaker-selection;";
+    newIframe.sandbox = "allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation allow-downloads";
+    document.getElementById("iframe-container").appendChild(newIframe);
+
+    const iframeDoc = newIframe.contentDocument || newIframe.contentWindow.document;
     iframeDoc.open();
     iframeDoc.write(`
         <html>
@@ -248,6 +269,32 @@ document.getElementById("run").addEventListener("click", function() {
         </html>
     `);
     iframeDoc.close();
+}
+
+// run button
+document.getElementById("run").addEventListener("click", function() {
+    compileSnippet();
 });
+// ctrl+enter // ctrl+s 
+document.addEventListener("keydown", function(event) {
+    // if ctrl+s also save the snippet to url params js= css= html=
+    if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        const jsCode = jsEditor.getValue();
+        const cssCode = cssEditor.getValue();
+        const htmlCode = htmlEditor.getValue();
+        const url = new URL(window.location);
+        url.searchParams.set("js", jsCode);
+        url.searchParams.set("css", cssCode);
+        url.searchParams.set("html", htmlCode);
+        history.pushState(null, null, url);
+        compileSnippet();
+    }
+    if (event.ctrlKey && event.key === "Enter") {
+        event.preventDefault();
+        compileSnippet();
+    }
+});
+
 
 /// END OF OUTPUT IFRAME ///
