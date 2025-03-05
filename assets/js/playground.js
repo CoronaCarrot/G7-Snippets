@@ -65,6 +65,19 @@ jsEditor.on("inputRead", function(cm, change) {
     }
 });
 
+function jumpToLine(i) {
+    //jsEditor.setCursor(i);
+    window.setTimeout(function() {
+        const code = document.querySelector('.CodeMirror-code');
+        const line = code.children[i];
+        if (line) {
+            line.scrollIntoView({block: "center", inline: "nearest", behavior: "smooth", boundary: code});
+            line.classList.add('highlighted');
+            setTimeout(() => line.classList.remove('highlighted'), 200);
+        }
+    }, 200);
+}
+
 const cssEditor = CodeMirror.fromTextArea(document.getElementById("css-contain"), {
     mode: "css",
     lineWrapping: true,
@@ -199,10 +212,75 @@ const iframe = document.getElementById("output-iframe");
 
 const iframeConsoleOutput = document.getElementById("cout");
 
+function toggleView(element) {
+    const parentLi = element.parentElement;
+    const expandedView = element.nextElementSibling;
+    if (expandedView.style.display === "inline") {
+        parentLi.classList.remove("expanded");
+        expandedView.style.display = "none";
+    } else {
+        parentLi.classList.add("expanded");
+        expandedView.style.display = "inline";
+    }
+}
+
+function highlightDepth(depth, uniqueId) {
+    const dir = document.getElementById(`dir-${uniqueId}`);
+    if (dir) {
+        
+    }
+}
+
+function objectToHTML(obj, maxDepth = 2, currentDepth = 0, visited = new WeakMap(), uniqueId = 0) {
+    if (uniqueId === 0) {
+        // uuid
+        uniqueId = Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
+    }
+    if (currentDepth >= maxDepth) {
+        console.log("maxDepth reached");
+        return "{...}";
+    }
+    if (visited.has(obj)) {
+        return `<a onclick="highlightDepth(${visited.get(obj)}, '${uniqueId}')" style="cursor: pointer;">[Circular]</a>`;
+    }
+    visited.set(obj, currentDepth);
+
+    const keys = Object.keys(obj);
+    var collapsedView = `{${keys.slice(0, 5).map(k => `${k}: ${typeof obj[k] === 'object' ? '{...}' : obj[k]}`).join(', ')}${keys.length > 5 ? ', ...' : ''}}`;
+    let html = `<li id="dir-${uniqueId}" class="console-line dir can-collapse"><details><summary>${collapsedView}</summary><ul>`;
+    for (let key in obj) {
+        if (typeof obj[key] === "object") {
+            const isTypeErrorInstance = obj[key] instanceof TypeError;
+            if (isTypeErrorInstance) {
+                html += `<li class="collapsed"><strong>${key}</strong>: <ul><li>${obj[key]}</li></ul></li>`;
+                continue;
+            }
+            const keys = Object.keys(obj[key]);
+            collapsedView = `{${keys.slice(0, 5).map(k => `${k}: ${typeof obj[key][k] === 'object' ? '{...}' : obj[key][k]}`).join(', ')}${keys.length > 5 ? ', ...' : ''}}`;
+            html += [
+                `<li class="can-collapse">`,
+                    `<details>`,
+                        `<summary><strong>${key}</strong>: ${collapsedView}</summary>`,
+                        `${objectToHTML(obj[key], maxDepth, currentDepth + 1, visited, uniqueId)}`,
+                    `</details>`,
+                `</li>`
+            ].join("");
+            continue;
+        }
+        html += `<li><strong>${key}</strong>: ${(typeof obj[key] === "string") ? `"${obj[key]}"` : obj[key]}</li>`;
+    }
+    html += "</ul></details></li>";
+
+    return html;
+}
+
 class HTMLConsole {
     constructor(htmlElement) {
         this.document = htmlElement;
         this.counts = {};
+        this.groupDepth = 1;
+        this.groupCollapsed = [];
+        this.timers = {};
     }
 
     peparePayload(payload) {
@@ -210,6 +288,22 @@ class HTMLConsole {
             return [payload];
         }
         return payload;
+    }
+
+    logErrorTrace(payload) {
+        var aux = payload[0];
+        aux = [aux.map((line, index, array) => {
+            const match = line.match(/at\s+(.*)\s+\((?:.*):(\d+):(\d+)\)/) || line.match(/at\s+(.*):(\d+):(\d+)/);
+            if (match) {
+                const functionName = match[1] && !match[1].includes('/') ? match[1] : '(playground)';
+                const lineNumber = match[2];
+                const columnNumber = match[3];
+                const prefix = index === array.length - 1 ? '└' : '┝';
+                return `${prefix}─ ${functionName.trim()} @ <a href="javascript:void(0)" onclick="jumpToLine(${lineNumber - 1})">${lineNumber}:${columnNumber}</a>`;
+            }
+            return line;
+        }).join("\n")].join("\n");
+        return aux;
     }
 
     assert(payload) {
@@ -237,55 +331,143 @@ class HTMLConsole {
 
     debug(payload) {
         payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line debug"><span>${payload.join(" ")}</span></li>`;
+        this.document.innerHTML += `<li class="console-line debug group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
     }
 
     dir(payload) {
         const obj = payload[0];
-        console.log(obj);
-        this.document.innerHTML += `<li class="console-line dir"><span>${JSON.stringify(obj, null, 2)}</span></li>`;
-        payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line dir"><span>${payload.join(" ")}</span></li>`;
-    }
-
-    system(payload) {
-        payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line system"><span>${payload.join(" ")}</span></li>`;
-    }
-
-    log(payload) {
-        payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line log"><span>${payload.join(" ")}</span></li>`;
+        // if obj is not an object 
+        if (typeof obj !== "object") {
+            this.log(payload);
+            return;
+        }
+        // convert object to expandable html representation (include deep objects)
+        const lookupDepth = 3;
+        const html = objectToHTML(obj, lookupDepth);
+        this.document.innerHTML += html
     }
 
     error(payload) {
         payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line error"><span>${payload.join(" ")}</span></li>`;
+        this.document.innerHTML += `<li class="console-line error group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
     }
 
-    warn(payload) {
-        payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line warn"><span>${payload.join(" ")}</span></li>`;
+    group() {
+        this.groupDepth++;
+        this.groupCollapsed.push(false);
     }
 
+    groupCollapsed() {
+        this.system("🔏 Built-In Console Doesn't Support Collapsed Groups");
+        this.groupDepth++;
+        this.groupCollapsed.push(true);
+    }
+
+    groupEnd() {
+        this.groupDepth > 1 && this.groupDepth--;
+        this.groupCollapsed.pop();
+    }
+    
     info(payload) {
         payload = this.peparePayload(payload);
-        this.document.innerHTML += `<li class="console-line info"><span>${payload.join(" ")}</span></li>`;
+        this.document.innerHTML += `<li class="console-line info group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
     }
+    
+    log(payload) {
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line log group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
+    }
+
+    profile() {
+        this.system("🔏 Built-In Console Doesn't Support Profiling");
+    }
+
+    profileEnd() {
+        this.system("🔏 Built-In Console Doesn't Support Profiling");
+    }
+    
+    system(payload) {
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line system group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
+    }
+
+    table(payload) {
+        this.system("🔏 Built-In Console Doesn't Support Tables");
+    }
+
+    time(label) {
+        const timeLabel = label[0] || "default";
+        if (this.timers[timeLabel]) {
+            this.warn(`Timer "${timeLabel}" already exists`);
+            return;
+        }
+        this.timers[timeLabel] = Date.now();
+    }
+    
+    timeEnd(label) {
+        const timeLabel = label[0] || "default";
+        if (!this.timers[timeLabel]) {
+            this.warn(`Timer "${timeLabel}" doesn't exist`);
+            return;
+        }
+        const time = Date.now() - this.timers[timeLabel];
+        this.info(`${timeLabel}: ${time}ms`);
+        console.info(`${timeLabel}: ${time}ms`);
+        delete this.timers[timeLabel];
+    }
+
+    timeLog(label) {
+        const timeLabel = label[0] || "default";
+        if (!this.timers[timeLabel]) {
+            this.warn(`Timer "${timeLabel}" doesn't exist`);
+            return;
+        }
+        const time = Date.now() - this.timers[timeLabel];
+        this.info(`${timeLabel}: ${time}ms`);
+        console.info(`${timeLabel}: ${time}ms`);
+    }
+
+    timeStamp() {
+        this.system("🔏 Built-In Console Doesn't Support TimeStamps");
+    }
+
+    trace(payload) {
+        var aux = payload[0];
+        aux = ["console.trace", aux.map((line, index, array) => {
+            const match = line.match(/at\s+(.*)\s+\((?:.*):(\d+):(\d+)\)/) || line.match(/at\s+(.*):(\d+):(\d+)/);
+            if (match) {
+                const functionName = match[1] && !match[1].includes('/') ? match[1] : '(playground)';
+                const lineNumber = match[2];
+                const columnNumber = match[3];
+                const prefix = index === array.length - 1 ? '└' : '┝';
+                return `${prefix}─ ${functionName.trim()} @ <a href="javascript:void(0)" onclick="jumpToLine(${lineNumber - 1})">${lineNumber}:${columnNumber}</a>`;
+            }
+            return line;
+        }).join("\n")].join("\n");
+
+        this.log(aux);
+    }
+    
+    warn(payload) {
+        payload = this.peparePayload(payload);
+        this.document.innerHTML += `<li class="console-line warn group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
+    }
+
 }
 
 var iframeConsole = new HTMLConsole(iframeConsoleOutput);
 // listen for errors
 window.addEventListener("message", function(event) {
     if (event.data.console.type == "iframe-error"){
-        iframeConsole.error(event.data.console.payload);
+        var aux = event.data.error.stack.split("\n").slice(1);
+        iframeConsole.error(`🔏 ${event.data.message.replace(/at\s+(\d+):(\d+)/g, 'at <a href="javascript:void(0)" onclick="jumpToLine($1 - 1)">$1:$2</a>')}<br>${iframeConsole.logErrorTrace([aux])}`);
     } else {
         // fun HTMLConsole function for console.type
         try {
             if (typeof iframeConsole[event.data.console.type] === 'function') {
                 iframeConsole[event.data.console.type](event.data.console.payload);
             } else {
-                throw new Error(`Unknown console type: ${event.data.console.type}`);
+                throw new Error(`console.${event.data.console.type}() is unknown or not supported`);
             }
         } catch (e) {
             console.error(e);
@@ -296,14 +478,11 @@ window.addEventListener("message", function(event) {
 
 document.addEventListener("DOMContentLoaded", function() {
     function updateHasNextClass() {
-        const consoleLines = iframeConsoleOutput.querySelectorAll('.console-line.log, .console-line.info, .console-line.debug');
+        const validNextClasses = ['log', 'info', 'debug', 'dir'];
+        const consoleLines = iframeConsoleOutput.querySelectorAll('.console-line');
         consoleLines.forEach((line, index) => {
             const nextLine = consoleLines[index + 1];
-            if (nextLine && (
-                (line.classList.contains('log') && (nextLine.classList.contains('log') || nextLine.classList.contains('info') || nextLine.classList.contains('debug'))) ||
-                (line.classList.contains('info') && (nextLine.classList.contains('info') || nextLine.classList.contains('debug') || nextLine.classList.contains('log'))) ||
-                (line.classList.contains('debug') && (nextLine.classList.contains('debug') || nextLine.classList.contains('info') || nextLine.classList.contains('log')))
-            )) {
+            if (nextLine && validNextClasses.some(cls => nextLine.classList.contains(cls))) {
                 line.classList.add('br');
             } else {
                 line.classList.remove('br');
@@ -351,8 +530,10 @@ function compileSnippet() {
         </head>
         <body>
             ${htmlCode}
-            <script>${jsCode}<\/script>
         </body>
+        <footer>
+            <script>${jsCode}</script>
+        </footer>
         </html>
     `);
     iframeDoc.close();

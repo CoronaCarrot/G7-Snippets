@@ -43,8 +43,8 @@ injectConsole = (w) => {
         }, "*");
     };
     
-    w.onerror = (message, url, line, column) => {
-        pushToConsole(`${message} at ${line}:${column}`, "iframe-error")
+    w.onerror = (message, url, line, column, e) => {
+        w.parent.postMessage({ message: message, error: e, console: { type: "iframe-error", payload: e } }, "*");
     }
     
     if (w.console.system){
@@ -56,9 +56,8 @@ injectConsole = (w) => {
         const createConsoleMethod = (method, dnt) => {
             return function() {
                 let args = Array.from(arguments);
+                if (!dnt) systemConsole[method].apply(this, args);
                 pushToConsole(args, method);
-                if (dnt) return
-                systemConsole[method].apply(this, args);
             }
         }
 
@@ -74,9 +73,17 @@ injectConsole = (w) => {
             groupCollapsed: createConsoleMethod("groupCollapsed"),
             groupEnd: createConsoleMethod("groupEnd"),
             table: createConsoleMethod("table"),
-            timeEnd: createConsoleMethod("timeEnd"),
-            timeLog: createConsoleMethod("timeLog"),
-            trace: createConsoleMethod("trace"),
+            timeEnd: createConsoleMethod("timeEnd", true),
+            timeLog: createConsoleMethod("timeLog", true),
+            trace: function() {
+                let args = Array.from(arguments);
+                systemConsole.trace.apply(this, args);
+                const err = new Error();
+                var aux = err.stack.split("\n");
+                aux.splice(0, 2); // removing the line that we force to generate the error (var err = new Error();) from the message
+
+                pushToConsole([aux], "trace");
+            },
             profile: createConsoleMethod("profile"),
             profileEnd: createConsoleMethod("profileEnd"),
             count: createConsoleMethod("count"),
@@ -86,10 +93,7 @@ injectConsole = (w) => {
                 pushToConsole(arg, "system");
             },
             clear: createConsoleMethod("clear", true),
-            time: function() {
-                let args = Array.from(arguments);
-                systemConsole.time.apply(this, args);
-            },
+            time: createConsoleMethod("time", true),
             assert: function(assertion, label) {
                 if (!assertion) {
                     pushToConsole(label, "assert");

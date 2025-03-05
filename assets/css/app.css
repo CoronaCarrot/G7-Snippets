@@ -129,6 +129,16 @@ body {
   height: 100%;
 }
 
+.CodeMirror-code div {
+  background-color: none;
+  transition: background-color 1s;
+}
+
+.CodeMirror-code div.highlighted {
+  transition: background-color 0s;
+  background-color: #85858567;
+}
+
 .CodeMirror-scrollbar-filler {
   background: #282a36;
 }
@@ -278,7 +288,7 @@ li.CodeMirror-hint-active, .CodeMirror-hint:hover {
   overflow-wrap: break-word; 
   max-width: 100%; 
   padding: 3px;
-  padding-left: 20px;
+  padding-left: calc(20px * var(--group-level));
   min-height: 20px;
   line-height: 1em;
 }
@@ -354,4 +364,49 @@ li.CodeMirror-hint-active, .CodeMirror-hint:hover {
 .console-line.warn {
   background: rgba(189, 189, 75, 0.3);
   border-radius: 5px;
+}
+
+.console-line a {
+  color: #567599;
+  text-decoration: underline;
+}
+
+/* collapsible dir */
+.collapsed-view, .expanded-view {
+  padding: 0;
+  margin: 0;
+}
+
+ul.object {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+ul.object li.can-collapse {
+  cursor: pointer;
+}
+
+details {
+  margin: 5px 0;
+  width: 100%;
+}
+
+details summary {
+  color: #f3f3f3af;
+  font-family: 'Inconsolata', consolas, monospace;
+  font-size: 0.9em;
+  outline: none;
+}
+
+details summary:hover {
+  background-color: #9e9e9e70;
+}
+
+details ul.object {
+  padding-left: 20px;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
 }
