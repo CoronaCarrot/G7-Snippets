@@ -47,7 +47,7 @@ const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), 
     },
     gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     lint: {
-        esversion: 6, // Specify ECMAScript version
+        esversion: 8, // Specify ECMAScript version
         asi: true, // Allow missing semicolons
         // Add more linting options as needed
     },
@@ -199,16 +199,21 @@ class HTMLConsole {
         this.document = htmlElement;
     }
 
-    system(message) {
-        this.document.innerHTML += `<li class="console-line system"><span>${message}</span></li>`;
+    clear() {
+        this.document.innerHTML = "";
+        this.system("🔏 Console was cleared");
     }
 
-    log(message) {
-        this.document.innerHTML += `<li class="console-line log"><span>${message}</span></li>`;
+    system(payload) {
+        this.document.innerHTML += `<li class="console-line system"><span>${payload}</span></li>`;
     }
 
-    error(message) {
-        this.document.innerHTML += `<li class="console-line error"><span>${message}</span></li>`;
+    log(payload) {
+        this.document.innerHTML += `<li class="console-line log"><span>${payload}</span></li>`;
+    }
+
+    error(payload) {
+        this.document.innerHTML += `<li class="console-line error"><span>${payload}</span></li>`;
     }
 }
 

@@ -18,10 +18,11 @@ injectConsole = (w) => {
     }
 
     let console = (function(systemConsole){
-        const createConsoleMethod = (method) => {
+        const createConsoleMethod = (method, dnt) => {
             return function() {
                 let args = Array.from(arguments);
                 pushToConsole(args, method);
+                if (dnt) return
                 systemConsole[method].apply(this, args);
             }
         }
@@ -49,9 +50,7 @@ injectConsole = (w) => {
             system: function(arg) {
                 pushToConsole(arg, "system");
             },
-            clear: function() {
-                systemConsole.clear.apply(this, {});
-            },
+            clear: createConsoleMethod("clear", true),
             time: function() {
                 let args = Array.from(arguments);
                 systemConsole.time.apply(this, args);
