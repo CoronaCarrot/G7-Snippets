@@ -148,7 +148,7 @@ body {
 
 
 .panel .CodeMirror {
-  margin-top: var(--panel-headerheight);
+  margin-top: var(--panel-headerheight); 
   height: calc(100% - 50px);
 }
 
