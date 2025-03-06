@@ -481,6 +481,7 @@ window.addEventListener("message", function(event) {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
+    var consoleAutoScroll = true;
     function updateHasNextClass() {
         const validNextClasses = ['log', 'info', 'debug', 'dir'];
         const consoleLines = iframeConsoleOutput.querySelectorAll('.console-line');
@@ -492,11 +493,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 line.classList.remove('br');
             }
         });
+
+        // auto scroll if scroll wheel was at bottom before new element was added
+        if (consoleAutoScroll) {
+            console.log("scrolling")
+            iframeConsoleOutput.scrollTo({ behavior: 'smooth', top: iframeConsoleOutput.scrollHeight})
+        }
     }
 
     const observer = new MutationObserver(updateHasNextClass);
     observer.observe(iframeConsoleOutput, { childList: true, subtree: true });
-
+    
     // Initial call to set up the classes
     updateHasNextClass();
 });
