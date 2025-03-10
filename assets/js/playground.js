@@ -18,6 +18,7 @@ const showConsole = ["1", "true"].includes(urlParams.get('showConsole') ?? "true
 const lang = urlParams.get('lang');
 const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
 const mode = urlParams.get('mode') ?? "html";
+const autoRun = ["1", "true"].includes(urlParams.get('autoRun') ?? "true");
 
 const jsSrc = urlParams.get('js') ?? "";
 const cssSrc = urlParams.get('css') ?? "";
@@ -54,6 +55,10 @@ if (mode === "js") {
     iframeConsoleOutput.style.height = "calc(100% - 40px)";
 }
 
+// if autoRun is true, run the snippet
+if (autoRun) {
+    compileSnippet();
+}
 
 
 /// EDITOR SETUP ///
