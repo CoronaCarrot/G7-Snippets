@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snippet</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/lint.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldgutter.min.css">
+    <link rel="stylesheet" href="../assets/css/app.css">
+</head>
+
+<body>
+    <div id="app" class="app">
+        <div class="playground-header">CODE PLAYGROUND <button id="run" class="run-btn">RUN</button></div>
+        <div id="playground-container" class="playground-container rr">
+            <div id="editor" class="playground-editor" style="width: calc(50% - 0.5px);">
+                <div class="panel" id="jspanel" style="height: calc(33.3333% - 1px);">
+                    <div class="panel-header">
+                        <p>JS</p>
+                    </div>
+                    <textarea class="code-editor" placeholder="javascript" id="js-contain"
+                        style="display: none;"></textarea>
+                </div>
+                <div class="gutter gutter-v"></div>
+                <div class="panel" id="htmlpanel" style="height: calc(33.3333% - 2px);">
+                    <div class="panel-header">
+                        <p>HTML</p>
+                    </div>
+                    <textarea class="code-editor" placeholder="html" id="html-contain"
+                        style="display: none;"></textarea>
+                </div>
+                <div class="gutter gutter-v"></div>
+                <div class="panel" id="csspanel" style="height: calc(33.3333% - 1px);">
+                    <div class="panel-header">
+                        <p>CSS</p>
+                    </div>
+                    <textarea class="code-editor" placeholder="css" id="css-contain" style="display: none;"></textarea>
+                </div>
+            </div>
+            <div class="gutter gutter-h" id="consoleGutter" style="display: none;"></div>
+            <div id="output" class="playground-output" style="width: calc(50% - 1px);">
+                <div id="iframe-container" style="height: calc(50% - 2px); background-color: white;">
+                    <iframe id="output-iframe" class="iframe-output" style="width: 100%; height: 100%;"
+                        allow="midi; geolocation; microphone; camera; display-capture; encrypted-media; clipboard-read; clipboard-write; notifications; payment-handler; persistent-storage; background-sync; ambient-light-sensor; accessibility-events; speaker-selection;"
+                        sandbox="allow-modals allow-forms allow-scripts allow-same-origin allow-popups allow-top-navigation-by-user-activation allow-downloads"></iframe>
+                </div>
+                <div class="gutter gutter-v"></div>
+                <div id="consoleOutput" class="maximised" style="display: none; height: calc(50% - 2px);">
+                    <div class="console-header">
+                        <!-- svg /assets/svg/console.svg -->
+                        <img src="../assets/svg/console.svg" alt="console"
+                            style="width: 18px; height: 18px; padding-right: 5px;">
+                        <p>CONSOLE</p>
+                        <div class="right-actions">
+                            <!-- SVG buttons -->
+                            <img id="btn-cclear" src="../assets/svg/clear_console.svg" alt="clear"
+                                style="width: 18px; height: 18px; padding-right: 5px;" onclick="iframeConsole.clear();">
+                            <img id="btn-copen" src="../assets/svg/open_console.svg" alt="open"
+                                style="width: 18px; height: 18px; padding-right: 5px;"
+                                onclick="consoleOutput.classList.add('maximised');">
+                            <img id="btn-cmin" src="../assets/svg/minimise_console.svg" alt="minimise"
+                                style="width: 18px; height: 18px;"
+                                onclick="consoleOutput.classList.remove('maximised');">
+                        </div>
+                    </div>
+                    <ul id="cout" style="width: calc(100% - 10px); height: calc(100% - 38px);">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/javascript-lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/css-lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/lint/html-lint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.13.4/jshint.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/csslint/1.0.5/csslint.js"></script>
+    <script src="https://cdn.statically.io/gh/htmlhint/HTMLHint/00d4d696/dist/htmlhint.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/edit/closetag.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/javascript-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/css-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/html-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/hint/xml-hint.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldgutter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/brace-fold.min.js"></script>
+
+    <script src="../assets/js/playground.js"></script>
+</footer>
+
+</html>
