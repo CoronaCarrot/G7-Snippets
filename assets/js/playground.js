@@ -324,8 +324,27 @@ class HTMLConsole {
 
     peparePayload(payload) {
         if (typeof payload === "string") {
-            return [payload];
+            payload = [payload];
         }
+
+        if (payload.length === 0) {
+            payload = [""];
+        }
+
+        for (let i = 0; i < payload.length; i++) {
+            if (typeof payload[i] === "object" && payload[i] !== null) {
+                payload[i] = JSON.stringify(payload[i]);
+            }
+            // undefined -> "undefined"
+            if (payload[i] === undefined) {
+                payload[i] = "undefined";
+            }
+            // null -> "null"
+            if (payload[i] === null) {
+                payload[i] = "null";
+            }
+        }
+
         return payload;
     }
 
