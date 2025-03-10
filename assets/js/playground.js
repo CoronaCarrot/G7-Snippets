@@ -17,8 +17,16 @@ htmlCode.value = htmlSrc;
 
 const consoleOutput = document.getElementById("consoleOutput");
 const consoleGutter = document.getElementById("consoleGutter");
+const iframeConsoleOutput = document.getElementById("cout");
 
 if (showConsole) consoleOutput.style.display = "block"; consoleGutter.style.display = "block"
+
+function toggleconsole() {
+    if (consoleOutput.classList.contains("maximised")) {
+        consoleOutput.classList.remove("maximised");
+        iframeConsoleOutput.style.display = "none";
+    } else { }
+}
 
 
 
@@ -209,8 +217,6 @@ setupResizing(previewResize, false); // Horizontal resizing for preview
 
 /// OUTPUT IFRAME ///
 const iframe = document.getElementById("output-iframe");
-
-const iframeConsoleOutput = document.getElementById("cout");
 
 function toggleView(element) {
     const parentLi = element.parentElement;
