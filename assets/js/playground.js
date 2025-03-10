@@ -51,6 +51,7 @@ if (mode === "js") {
     jspanel.style.height = "100%";
     consoleOutput.style.height = "100%";
     consolehidebtn.style.display = "none";
+    iframeConsoleOutput.style.height = "calc(100% - 40px)";
 }
 
 
@@ -489,7 +490,7 @@ class HTMLConsole {
 var iframeConsole = new HTMLConsole(iframeConsoleOutput);
 // listen for errors
 window.addEventListener("message", function(event) {
-    if (event.data.console.type == "iframe-error"){
+    if ((event.data.console.type ?? "undefined") == "iframe-error"){
         var aux = event.data.error.stack.split("\n").slice(1);
         iframeConsole.error(`🔏 ${event.data.message.replace(/at\s+(\d+):(\d+)/g, 'at <a href="javascript:void(0)" onclick="jumpToLine($1 - 1)">$1:$2</a>')}<br>${iframeConsole.logErrorTrace([aux])}`);
     } else {
