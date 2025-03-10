@@ -20,6 +20,9 @@ const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
 const mode = urlParams.get('mode') ?? "html";
 const autoRun = ["1", "true"].includes(urlParams.get('autoRun') ?? "true");
 const hideSystemMessages = ["1", "true"].includes(urlParams.get('hideSystemMessages') ?? "true");
+const jsMaxLines = parseInt(urlParams.get('jsMaxLines'));
+const cssMaxLines = parseInt(urlParams.get('cssMaxLines'));
+const htmlMaxLines = parseInt(urlParams.get('htmlMaxLines'));
 
 const jsSrc = urlParams.get('js') ?? "";
 const cssSrc = urlParams.get('css') ?? "";
@@ -91,7 +94,8 @@ const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), 
         asi: true, // Allow missing semicolons
         // Add more linting options as needed
     },
-    foldGutter: true
+    foldGutter: true,
+    maxLines: jsMaxLines
 });
 
 jsEditor.on("inputRead", function(cm, change) {
@@ -128,7 +132,8 @@ const cssEditor = CodeMirror.fromTextArea(document.getElementById("css-contain")
     },
     gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     lint: true,
-    foldGutter: true
+    foldGutter: true,
+    maxLines: cssMaxLines
 });
 
 cssEditor.on("inputRead", function(cm, change) {
@@ -154,7 +159,8 @@ const htmlEditor = CodeMirror.fromTextArea(document.getElementById("html-contain
     },
     gutters: ["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"],
     lint: true,
-    foldGutter: true
+    foldGutter: true,
+    maxLines: htmlMaxLines
 });
 
 htmlEditor.on("inputRead", function(cm, change) {
