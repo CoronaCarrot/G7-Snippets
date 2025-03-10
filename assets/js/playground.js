@@ -19,6 +19,7 @@ const lang = urlParams.get('lang');
 const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
 const mode = urlParams.get('mode') ?? "html";
 const autoRun = ["1", "true"].includes(urlParams.get('autoRun') ?? "true");
+const hideSystemMessages = ["1", "true"].includes(urlParams.get('hideSystemMessages') ?? "true");
 
 const jsSrc = urlParams.get('js') ?? "";
 const cssSrc = urlParams.get('css') ?? "";
@@ -53,11 +54,6 @@ if (mode === "js") {
     consoleOutput.style.height = "100%";
     consolehidebtn.style.display = "none";
     iframeConsoleOutput.style.height = "calc(100% - 40px)";
-}
-
-// if autoRun is true, run the snippet
-if (autoRun) {
-    compileSnippet();
 }
 
 
@@ -424,6 +420,9 @@ class HTMLConsole {
     }
     
     system(payload) {
+        if (hideSystemMessages) {
+            return;
+        }
         payload = this.peparePayload(payload);
         this.document.innerHTML += `<li class="console-line system group-level-${this.groupDepth}" style="--group-level: ${this.groupDepth};"><span>${payload.join(" ")}</span></li>`;
     }
@@ -610,3 +609,13 @@ document.addEventListener("keydown", function(event) {
 
 
 /// END OF OUTPUT IFRAME ///
+
+
+
+
+
+
+// if autoRun is true, run the snippet
+if (autoRun) {
+    compileSnippet();
+}
