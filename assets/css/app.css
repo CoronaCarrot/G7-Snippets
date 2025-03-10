@@ -9,10 +9,16 @@ body {
   background: #282a36;
 }
 
+.playground-header .header-right {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+  right: 0;
+  padding: 10px;
+}
+
 .run-btn {
     display: flex;
-    position: absolute;
-    right: 5px;
     padding: 2px 10px;
     background-color: #569956;
     border: none;

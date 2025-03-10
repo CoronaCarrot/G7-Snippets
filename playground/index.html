@@ -17,7 +17,10 @@
 
 <body>
     <div id="app" class="app">
-        <div class="playground-header">CODE PLAYGROUND <button id="run" class="run-btn">RUN</button></div>
+        <div class="playground-header">CODE PLAYGROUND <div class="header-right"><button id="run"
+                    class="run-btn">RUN</button><img id="btn-fullscreen" src="../assets/svg/iframe_fullscreen.svg"
+                    alt="clear" style="width: 18px; height: 18px; padding-right: 5px; display: none;"></div>
+        </div>
         <div id="playground-container" class="playground-container rr">
             <div id="editor" class="playground-editor" style="width: calc(50% - 0.5px);">
                 <div class="panel" id="jspanel" style="height: calc(33.3333% - 1px);">
@@ -105,6 +108,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/brace-fold.min.js"></script>
 
     <script src="../assets/js/maxLines.js"></script>
+    <script src="../assets/js/app.js"></script>
     <script src="../assets/js/playground.js"></script>
 </footer>
 
