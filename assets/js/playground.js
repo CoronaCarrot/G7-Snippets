@@ -1,23 +1,31 @@
 const app = document.getElementById("app");
+const jsCode = document.getElementById("js-contain");
+const cssCode = document.getElementById("css-contain");
+const htmlCode = document.getElementById("html-contain");
+const htmlpanel = document.getElementById("htmlpanel");
+const csspanel = document.getElementById("csspanel");
+const jspanel = document.getElementById("jspanel");
+const consoleOutput = document.getElementById("consoleOutput");
+const consoleGutter = document.getElementById("consoleGutter");
+const iframeConsoleOutput = document.getElementById("cout");
+const editorReseize = document.getElementById("editor");
+const outputResize = document.getElementById("output");
+const previewResize = document.getElementById("playground-container");
+
 const urlParams = new URLSearchParams(window.location.search);
 
 const showConsole = ["1", "true"].includes(urlParams.get('showConsole') ?? "true")
 const lang = urlParams.get('lang');
 const highlight = ["1", "true"].includes(urlParams.get('highlight') ?? "true");
+const mode = urlParams.get('mode') ?? "html";
 
 const jsSrc = urlParams.get('js') ?? "";
 const cssSrc = urlParams.get('css') ?? "";
 const htmlSrc = urlParams.get('html') ?? "";
-const jsCode = document.getElementById("js-contain");
-const cssCode = document.getElementById("css-contain");
-const htmlCode = document.getElementById("html-contain");
 jsCode.value = jsSrc;
 cssCode.value = cssSrc;
 htmlCode.value = htmlSrc;
 
-const consoleOutput = document.getElementById("consoleOutput");
-const consoleGutter = document.getElementById("consoleGutter");
-const iframeConsoleOutput = document.getElementById("cout");
 
 if (showConsole) consoleOutput.style.display = "block"; consoleGutter.style.display = "block"
 
@@ -26,6 +34,23 @@ function toggleconsole() {
         consoleOutput.classList.remove("maximised");
         iframeConsoleOutput.style.display = "none";
     } else { }
+}
+
+// if mode == "js" only show the js editor and console
+if (mode === "js") {
+    console.log("js mode")
+    const gutters = document.querySelectorAll(".gutter-v");
+    const consolehidebtn = document.getElementById("btn-cmin");
+    const htmlcontainer = document.getElementById("iframe-container")
+    gutters.forEach(gutter => {
+        gutter.style.display = "none";
+    });
+    htmlcontainer.style.display = "none";
+    htmlpanel.style.display = "none";
+    csspanel.style.display = "none";
+    jspanel.style.height = "100%";
+    consoleOutput.style.height = "100%";
+    consolehidebtn.style.display = "none";
 }
 
 
@@ -203,10 +228,6 @@ function setupResizing(container, isVertical = true) {
         }
     }
 }
-
-const editorReseize = document.getElementById("editor");
-const outputResize = document.getElementById("output");
-const previewResize = document.getElementById("playground-container");
 
 setupResizing(editorReseize, true); // Vertical resizing for editor
 setupResizing(outputResize, true); // Vertical resizing for output

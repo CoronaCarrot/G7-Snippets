@@ -20,20 +20,26 @@
         <div class="playground-header">CODE PLAYGROUND <button id="run" class="run-btn">RUN</button></div>
         <div id="playground-container" class="playground-container rr">
             <div id="editor" class="playground-editor" style="width: calc(50% - 0.5px);">
-                <div class="panel" style="height: calc(33.3333% - 1px);">
-                    <div class="panel-header"><p>JS</p></div>
+                <div class="panel" id="jspanel" style="height: calc(33.3333% - 1px);">
+                    <div class="panel-header">
+                        <p>JS</p>
+                    </div>
                     <textarea class="code-editor" placeholder="javascript" id="js-contain"
                         style="display: none;"></textarea>
                 </div>
                 <div class="gutter gutter-v"></div>
-                <div class="panel" style="height: calc(33.3333% - 2px);">
-                    <div class="panel-header"><p>HTML</p></div>
+                <div class="panel" id="htmlpanel" style="height: calc(33.3333% - 2px);">
+                    <div class="panel-header">
+                        <p>HTML</p>
+                    </div>
                     <textarea class="code-editor" placeholder="html" id="html-contain"
                         style="display: none;"></textarea>
                 </div>
                 <div class="gutter gutter-v"></div>
-                <div class="panel" style="height: calc(33.3333% - 1px);">
-                    <div class="panel-header"><p>CSS</p></div>
+                <div class="panel" id="csspanel" style="height: calc(33.3333% - 1px);">
+                    <div class="panel-header">
+                        <p>CSS</p>
+                    </div>
                     <textarea class="code-editor" placeholder="css" id="css-contain" style="display: none;"></textarea>
                 </div>
             </div>
