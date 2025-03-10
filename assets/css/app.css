@@ -1,5 +1,6 @@
 /* import google fonts */
 /* inconsolata */ @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;700&display=swap');
+/* poppins extrabold */ @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap");
 
 body {
   height: 100vh;
@@ -69,16 +70,37 @@ body {
 }
 
 
-
+:root {
+  --panel-headerheight: 40px;
+}
 
 
 .panel {
-    margin: 0;
-    resize: none;
-    width: 100%;
-    background: none;
-    color: ghostwhite;
-    border: none;
+  position: relative;
+  overflow: auto;
+  margin: 0;
+  resize: none;
+  width: 100%;
+  background: none;
+  color: #f3f3f3c9;
+  border: none;
+}
+
+.panel .panel-header {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  color: #f3f3f3c9;
+  height: var(--panel-headerheight);
+}
+
+.panel-header p {
+  font-family: 'Poppins', consolas, monospace;
+  font-weight: 800;
+  padding-left: 10px;
+  margin: auto;
 }
 
 .panel:focus {
@@ -126,7 +148,27 @@ body {
 
 
 .panel .CodeMirror {
+  margin-top: var(--panel-headerheight); 
+  height: calc(100% - 50px);
+}
+
+.CodeMirror-foldmarker {
+  position: relative;
+  color: rgba(0, 0, 0, 0);
+  text-shadow: none;
+}
+.CodeMirror-foldmarker::after {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  content: '...';
   height: 100%;
+  padding-top: 7px;
+  font-weight: 600;
+  justify-content: center;
+  color: #8f8f8f;
 }
 
 .CodeMirror-code div {
