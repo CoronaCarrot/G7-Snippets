@@ -34,28 +34,11 @@ if (jsRef != "") {
     console.log("jsRef found");
     const code = localStorage.getItem(`jsstorage-${jsRef}`);
     if (code !== null && code !== undefined) {
-        jsSrc = `// Start of stored JavaScript code for reference ${jsRef}\n${code}\n// End of stored JavaScript code for reference ${jsRef}`;
-        readOnlyLines = jsSrc.split("\n").map((line, index) => {
-            return index;
-        });
-        if(!jsSrc.endsWith("\n\n")) {
-            jsSrc += `\n\n`;
-        }
+        jsSrc = `// Will run stored JavaScript code for reference ${jsRef} before running the code below.\n\n`;
     }
-    // Update jsSrc on local storage change
-    window.addEventListener("storage", function(event) {
-        if (event.key === `jsstorage-${jsRef}`) {
-            // Update jsCode.value
-            jsCode.value = jsCode.value.replace(/\/\/ Start of stored JavaScript code for reference [\w\d]+[\s\S]*?\/\/ End of stored JavaScript code for reference [\w\d]+/, `// Start of stored JavaScript code for reference ${jsRef}\n${event.newValue}\n// End of stored JavaScript code for reference ${jsRef}`);
-            jsEditor.setValue(jsEditor.getValue().replace(/\/\/ Start of stored JavaScript code for reference [\w\d]+[\s\S]*?\/\/ End of stored JavaScript code for reference [\w\d]+/, `// Start of stored JavaScript code for reference ${jsRef}\n${event.newValue}\n// End of stored JavaScript code for reference ${jsRef}`));
-            jsSrc = jsCode.value;
-            readOnlyLines = `// Start of stored JavaScript code for reference ${jsRef}\n${event.newValue}\n// End of stored JavaScript code for reference ${jsRef}`.split("\n").map((line, index) => {
-                return index;
-            });
-        }
-    });
 }
 jsSrc = jsSrc ? jsSrc + urlParams.get('js') ?? "" : urlParams.get('js') ?? "";
+//jsSrc = urlParams.get('js') ?? "";
 const cssSrc = urlParams.get('css') ?? "";
 const htmlSrc = urlParams.get('html') ?? "";
 jsCode.value = jsSrc;
@@ -625,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function compileSnippet() {
     iframeConsole = new HTMLConsole(iframeConsoleOutput);
-    const jsCode = jsEditor.getValue();
+    const jsCode = jsRef ? `${localStorage.getItem(`jsstorage-${jsRef}`)}\n${jsEditor.getValue()}` : jsEditor.getValue();
     const cssCode = cssEditor.getValue();
     const htmlCode = htmlEditor.getValue();
     
