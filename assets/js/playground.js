@@ -130,6 +130,12 @@ const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), 
     readOnly: readOnly
 });
 
+if (jsSaveForReferanceTo) {
+    const jsCode = jsEditor.getValue();
+    // save the js code to jsstorage-{jsSaveForReferanceTo} in local storage
+    localStorage.setItem(`jsstorage-${jsSaveForReferanceTo}`, jsCode);
+}q
+
 jsEditor.on("inputRead", function(cm, change) {
     if (!cm.state.completionActive && /* Enforce single completion */ change.origin !== "setValue" && shouldShowHint(cm, change)) {
         autoComplete(cm);
