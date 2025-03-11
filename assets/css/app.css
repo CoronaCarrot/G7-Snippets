@@ -9,7 +9,7 @@ body {
   background: #282a36;
 }
 
-.playground-header .header-right {
+.playground-header .header-right, .panel-header .header-right {
   display: flex;
   gap: 10px;
   position: absolute;
@@ -100,13 +100,14 @@ body {
   z-index: 2;
   color: #f3f3f3c9;
   height: var(--panel-headerheight);
+  width: 100%;
 }
 
 .panel-header p {
   font-family: 'Poppins', consolas, monospace;
   font-weight: 800;
   padding-left: 10px;
-  margin: auto;
+  margin: auto 0;
 }
 
 .panel:focus {
