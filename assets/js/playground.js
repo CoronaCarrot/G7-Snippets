@@ -24,8 +24,38 @@ const readOnly = ["1", "true"].includes(urlParams.get('readOnly') ?? "false");
 const jsMaxLines = parseInt(urlParams.get('jsMaxLines'));
 const cssMaxLines = parseInt(urlParams.get('cssMaxLines'));
 const htmlMaxLines = parseInt(urlParams.get('htmlMaxLines'));
+const jsSaveForReferanceTo = urlParams.get('jsSaveForReferanceTo') ?? undefined;
 
-const jsSrc = urlParams.get('js') ?? "";
+const jsRef = urlParams.get('jsRef') ?? "";
+let jsSrc;
+let readOnlyLines = [];
+console.log(jsRef);
+if (jsRef != "") {
+    console.log("jsRef found");
+    const code = localStorage.getItem(`jsstorage-${jsRef}`);
+    if (code !== null && code !== undefined) {
+        jsSrc = `// Start of stored JavaScript code for reference ${jsRef}\n${code}\n// End of stored JavaScript code for reference ${jsRef}`;
+        readOnlyLines = jsSrc.split("\n").map((line, index) => {
+            return index;
+        });
+        if(!jsSrc.endsWith("\n\n")) {
+            jsSrc += `\n\n`;
+        }
+    }
+    // Update jsSrc on local storage change
+    window.addEventListener("storage", function(event) {
+        if (event.key === `jsstorage-${jsRef}`) {
+            // Update jsCode.value
+            jsCode.value = jsCode.value.replace(/\/\/ Start of stored JavaScript code for reference [\w\d]+[\s\S]*?\/\/ End of stored JavaScript code for reference [\w\d]+/, `// Start of stored JavaScript code for reference ${jsRef}\n${event.newValue}\n// End of stored JavaScript code for reference ${jsRef}`);
+            jsEditor.setValue(jsEditor.getValue().replace(/\/\/ Start of stored JavaScript code for reference [\w\d]+[\s\S]*?\/\/ End of stored JavaScript code for reference [\w\d]+/, `// Start of stored JavaScript code for reference ${jsRef}\n${event.newValue}\n// End of stored JavaScript code for reference ${jsRef}`));
+            jsSrc = jsCode.value;
+            readOnlyLines = `// Start of stored JavaScript code for reference ${jsRef}\n${event.newValue}\n// End of stored JavaScript code for reference ${jsRef}`.split("\n").map((line, index) => {
+                return index;
+            });
+        }
+    });
+}
+jsSrc = jsSrc ? jsSrc + urlParams.get('js') ?? "" : urlParams.get('js') ?? "";
 const cssSrc = urlParams.get('css') ?? "";
 const htmlSrc = urlParams.get('html') ?? "";
 jsCode.value = jsSrc;
@@ -103,6 +133,23 @@ const jsEditor = CodeMirror.fromTextArea(document.getElementById("js-contain"), 
 jsEditor.on("inputRead", function(cm, change) {
     if (!cm.state.completionActive && /* Enforce single completion */ change.origin !== "setValue" && shouldShowHint(cm, change)) {
         autoComplete(cm);
+    }
+});
+
+jsEditor.on("change", function(cm, change) {
+    if (jsSaveForReferanceTo) {
+        const jsCode = jsEditor.getValue();
+        // save the js code to jsstorage-{jsSaveForReferanceTo} in local storage
+        localStorage.setItem(`jsstorage-${jsSaveForReferanceTo}`, jsCode);
+    }
+});
+
+jsEditor.on("beforeChange", function(cm, change) {
+    if (readOnlyLines.includes(change.from.line)) {
+        // if line edit is from user input, cancel the change
+        if (change.origin !== "setValue") {
+            change.cancel();
+        }
     }
 });
 
