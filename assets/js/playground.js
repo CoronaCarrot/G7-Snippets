@@ -610,7 +610,7 @@ function compileSnippet() {
     iframeConsole = new HTMLConsole(iframeConsoleOutput);
     const jsCode = jsRef ? `${localStorage.getItem(`jsstorage-${jsRef}`)}\n${jsEditor.getValue()}` : jsEditor.getValue();
     // prefix use strict to js code
-    const jsCodeWithStrict = `"use strict";\n${jsCode}`;
+    const jsCodeWithStrict = `(()=>{"use strict";${jsCode}})()`;
     const cssCode = cssEditor.getValue();
     const htmlCode = htmlEditor.getValue();
     
